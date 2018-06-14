@@ -1,4 +1,4 @@
-package com.concept.maze.test.thread.pc1;
+package com.concept.maze.test.thread.pc2;
 
 public class ProducerConsumerWithWaitNofity {
 
@@ -27,10 +27,10 @@ class Resource {//重要
     //当前资源数量
     private int num = 0;
     //资源池中允许存放的资源数目
-    private static final int MAX_SIZE = 1;
+    private static final int MAX_SIZE = 10;
 
     public synchronized void add() {
-        while (num>=MAX_SIZE){
+        if (num>=MAX_SIZE){
             try {
                 System.out.println(Thread.currentThread().getName() +":货满!-->wait before-->"+num);
                 this.wait();
@@ -38,13 +38,15 @@ class Resource {//重要
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        } else{
+            System.out.println(Thread.currentThread().getName() + ":"+(++num));
+            this.notifyAll();
         }
-        System.out.println(Thread.currentThread().getName() + ":"+(++num));
-        this.notifyAll();
+
     }
 
     public synchronized void remove() {
-        while(num<=0){
+        if(num<=0){
             try {
                 System.out.println(Thread.currentThread().getName() +":缺货!-->wait before-->"+num);
                 this.wait();
@@ -52,9 +54,10 @@ class Resource {//重要
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        } else{
+            System.out.println(Thread.currentThread().getName()+":"+(num--));
+            this.notifyAll();
         }
-        System.out.println(Thread.currentThread().getName()+":"+(num--));
-        this.notifyAll();
     }
 }
 
