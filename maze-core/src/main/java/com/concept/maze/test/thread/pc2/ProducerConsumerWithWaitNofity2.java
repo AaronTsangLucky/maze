@@ -122,7 +122,7 @@ package com.concept.maze.test.thread.pc2;
  * 生产者No1(20):货满!-->wait before-->1
  * 生产者No2(20):货满!-->wait before-->1
  */
-public class ProducerConsumerWithWaitNofity {
+public class ProducerConsumerWithWaitNofity2 {
 
     public static void main(String[] args) {
         Resource resource = new Resource();
