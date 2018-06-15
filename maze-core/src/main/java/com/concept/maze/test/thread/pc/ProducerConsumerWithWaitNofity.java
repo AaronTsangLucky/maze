@@ -69,7 +69,7 @@ class ConsumerThread extends Thread {
 
     @Override
     public void run() {
-        for (int i = 1; i <=2; i++) {
+        for (int i = 1; i <=1; i++) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -91,7 +91,7 @@ class ProducerThread extends Thread {
 
     @Override
     public void run() {
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 1; i++) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
