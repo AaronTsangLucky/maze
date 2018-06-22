@@ -1,6 +1,9 @@
-package com.concept.maze.test.thread.pc;
+package com.concept.maze.test.thread.lock.pc;
 
-public class ProducerConsumerWithWaitNofity {
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ProducerConsumerWithLock {
 
     public static void main(String[] args) {
         Resource resource = new Resource();
@@ -29,32 +32,46 @@ class Resource {//重要
     //资源池中允许存放的资源数目
     private static final int MAX_SIZE = 10;
 
-    public synchronized void add(int runTime) {
-        while(num>=MAX_SIZE){
-            try {
-                System.out.println(Thread.currentThread().getName() +"("+runTime+"):货满!-->wait before-->"+num);
-                this.wait();
-                System.out.println(Thread.currentThread().getName() +"("+runTime+"):货满!-->wait after-->"+num);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition condition1 = lock.newCondition();
+//    private Condition condition2 = lock.newCondition();
+
+    public void add(int runTime) {
+        lock.lock();
+        try{
+            while(num>=MAX_SIZE){
+                try {
+                    System.out.println(Thread.currentThread().getName() +"("+runTime+"):货满!-->wait before-->"+num);
+                    condition1.await();
+                    System.out.println(Thread.currentThread().getName() +"("+runTime+"):货满!-->wait after-->"+num);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            System.out.println(Thread.currentThread().getName() +"("+runTime+"):"+num+"->"+(++num));
+            condition1.signalAll();
+        }finally {
+            lock.unlock();
         }
-        System.out.println(Thread.currentThread().getName() +"("+runTime+"):"+num+"->"+(++num));
-        this.notifyAll();
     }
 
-    public synchronized void remove(int runTime) {
-        while(num<=0){
-            try {
-                System.out.println(Thread.currentThread().getName() +"("+runTime+"):缺货!-->wait before-->"+num);
-                this.wait();
-                System.out.println(Thread.currentThread().getName() +"("+runTime+"):缺货!-->wait after-->"+num);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public void remove(int runTime) {
+        lock.lock();
+        try{
+            while(num<=0){
+                try {
+                    System.out.println(Thread.currentThread().getName() +"("+runTime+"):缺货!-->wait before-->"+num);
+                    condition1.await();
+                    System.out.println(Thread.currentThread().getName() +"("+runTime+"):缺货!-->wait after-->"+num);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            System.out.println(Thread.currentThread().getName() +"("+runTime+"):"+num+"->"+(--num));
+            condition1.signalAll();
+        }finally {
+            lock.unlock();
         }
-        System.out.println(Thread.currentThread().getName() +"("+runTime+"):"+num+"->"+(--num));
-        this.notifyAll();
     }
 }
 
@@ -102,3 +119,5 @@ class ProducerThread extends Thread {
     }
 
 }
+
+
