@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TestTemp{
-    public static void main(String[] args) {
+    public static void main(String[] args) { 
         HelloConcurrent hc = new HelloConcurrent();
         for (int i = 0; i < 4; i++) {
             new Thread(hc).start();
